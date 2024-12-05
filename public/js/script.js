@@ -90,3 +90,16 @@ socket.on("userDisconnected", (userId) => {
         delete userMarkers[userId];
     }
 });
+
+// Listen for the user joined notification and display it
+socket.on("userJoinedNotification", (message) => {
+    const notification = document.createElement("div");
+    notification.classList.add("notification");
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    // Auto-remove the notification after 3 seconds
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+});
