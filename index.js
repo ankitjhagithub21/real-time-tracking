@@ -21,11 +21,13 @@ io.on("connection", (socket) => {
     console.log(`New connection: ${socket.id}`);
     let userName = "";
 
+    // Handle user joining
     socket.on("userJoined", (name) => {
         userName = name;
         console.log(`${userName} joined with ID: ${socket.id}`);
     });
 
+    // Handle location updates
     socket.on("updateLocation", ({ name, latitude, longitude }) => {
         const userIndex = userLocations.findIndex((user) => user.id === socket.id);
 
@@ -35,15 +37,20 @@ io.on("connection", (socket) => {
             userLocations[userIndex] = { id: socket.id, name, latitude, longitude };
         }
 
+        // Broadcast updated locations to all connected clients
         io.emit("userLocations", userLocations);
     });
 
+    // Handle disconnection
     socket.on("disconnect", () => {
         console.log(`${userName} disconnected.`);
         userLocations = userLocations.filter((user) => user.id !== socket.id);
+
+        // Notify clients to remove the disconnected user's marker
         io.emit("userDisconnected", socket.id);
     });
 });
+
 
 // Render index page
 app.get("/", (req, res) => {

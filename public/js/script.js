@@ -68,18 +68,17 @@ function startTracking() {
     }
 }
 
-// Handle updates from other users
+// Handle updates from all users
 socket.on("userLocations", (locations) => {
     locations.forEach((user) => {
-        if (user.name !== userName) {
-            // Add/update markers for other users
-            if (!userMarkers[user.id]) {
-                userMarkers[user.id] = L.marker([user.latitude, user.longitude])
-                    .addTo(map)
-                    .bindPopup(`${user.name}'s location`);
-            } else {
-                userMarkers[user.id].setLatLng([user.latitude, user.longitude]).update();
-            }
+        if (!userMarkers[user.id]) {
+            // Add marker for new users
+            userMarkers[user.id] = L.marker([user.latitude, user.longitude])
+                .addTo(map)
+                .bindPopup(`${user.name}'s location`);
+        } else {
+            // Update existing user's marker
+            userMarkers[user.id].setLatLng([user.latitude, user.longitude]).update();
         }
     });
 });
